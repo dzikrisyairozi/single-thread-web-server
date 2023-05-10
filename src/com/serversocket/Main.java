@@ -1,9 +1,9 @@
-package com;
+package com.serversocket;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 
-public class App {
+public class Main {
     static final int PORT = 80;
 
     /**
