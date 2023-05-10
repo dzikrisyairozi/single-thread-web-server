@@ -121,8 +121,9 @@ public class FileService {
     }
 
     private void setFileData() throws IOException {
-        FileInputStream fileInputStream = new FileInputStream(this.fetchedFilePath);
-        this.fileData = fileInputStream.readAllBytes();
+        try (FileInputStream fileInputStream = new FileInputStream(this.fetchedFilePath)) {
+            this.fileData = fileInputStream.readAllBytes();
+        }
     }
 
     public void setContentDisposition() {
