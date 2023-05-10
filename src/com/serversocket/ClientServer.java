@@ -29,7 +29,7 @@ public class ClientServer {
             String requestedFile = (parsed[1].equals("/")) ? "" : parsed[1].substring(1);
             System.out.format("[%s] %s - Accepted\n", new Date(), requestStatus);
 
-            boolean fileExists = FileService.fileExist(ROOT_DIR + requestedFile);
+            boolean fileExists = FileService.fileExists(ROOT_DIR + requestedFile);
 
             String fetchedFile = (fileExists) ? requestedFile : FILE_NOT_FOUND;
             String responseStatus = (fileExists) ? "200 OK" : "404 File Not Found";
