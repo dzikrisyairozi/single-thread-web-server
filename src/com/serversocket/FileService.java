@@ -10,8 +10,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class FileService {
-    private String fetchedFilePath;
 
+    private String fetchedFilePath;
     private String contentType;
     private String contentDisposition;
     private int fileLength;
@@ -20,19 +20,16 @@ public class FileService {
     public FileService(String root, String path, String defaultPath) throws IOException {
         String fullPath = root + path;
 
-        // If the given path is a file, then fetch the given file.
         if (!isDirectory(fullPath)) {
             this.initializeByFetchedFilePath(fullPath);
             return;
         }
 
-        // If the given path is a directory and has the default file inside it, then fetch the default file.
-        if (fileExist(fullPath + "/" + defaultPath)) {
+        if (fileExists(fullPath + "/" + defaultPath)) {
             this.initializeByFetchedFilePath(fullPath + "/" + defaultPath);
             return;
         }
 
-        // List all contents in the given directory & generate the list in html.
         ArrayList<HashMap<String, String>> files = getAllDirectoryContents(root, path);
         ListBuilder listBuilder = new ListBuilder(files, (path.equals(defaultPath)) ? "" : path);
 
@@ -44,33 +41,28 @@ public class FileService {
 
     private ArrayList<HashMap<String, String>> getAllDirectoryContents(String root, String path) {
         ArrayList<HashMap<String, String>> files = new ArrayList<>();
-
         File folder = new File(root + path);
         File[] listOfFiles = folder.listFiles();
         if (listOfFiles == null) {
             return files;
         }
-
         String rootPath = "/" + path + (path.equals("") ? "" : "/");
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
-        // Get each file/folder meta data
         for (File file : listOfFiles) {
             HashMap<String, String> data = new HashMap<>();
             long sizeInByte = (file.isFile()) ? file.length() : getDirectorySize(file);
-
             data.put("name", file.getName());
             data.put("path", rootPath + file.getName());
             data.put("lastModified", sdf.format(file.lastModified()));
             data.put("type", (file.isFile()) ? "file" : "folder");
-            data.put("size", Integer.toString((int) sizeInByte)); // in byte
-
+            data.put("size", Integer.toString((int) sizeInByte));
             files.add(data);
         }
         return files;
     }
 
-    public static boolean fileExist(String path) {
+    public static boolean fileExists(String path) {
         return (new File(path)).exists();
     }
 
@@ -85,7 +77,6 @@ public class FileService {
         if (files == null) {
             return length;
         }
-
         for (File file : files) {
             long adder = (file.isFile()) ? file.length() : getDirectorySize(file);
             length += adder;
@@ -95,7 +86,6 @@ public class FileService {
 
     private void initializeByFetchedFilePath(String path) throws IOException {
         this.fetchedFilePath = path;
-
         this.setFileLength();
         this.setContentType();
         this.setFileData();
@@ -108,12 +98,9 @@ public class FileService {
 
     private void setContentType() throws IOException {
         String type = Files.probeContentType(Path.of(this.fetchedFilePath));
-
-        // Handle Javascript type and set default type to text/plain if mime type isn't found.
         if (type == null || type.equals("")) {
             File file = new File(this.fetchedFilePath);
             String filename = file.getName();
-
             int idx = filename.lastIndexOf(".");
             type = (filename.substring(idx + 1).equals("js")) ? "application/javascript" : "text/plain";
         }
