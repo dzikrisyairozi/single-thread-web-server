@@ -13,12 +13,13 @@ public class Main {
      */
     public static void main(String[] args) {
         try {
-            ServerSocket serverSocket = new ServerSocket(PORT);
-            System.out.println("Server started: http:://127.0.0.1:" + PORT);
+            try (ServerSocket serverSocket = new ServerSocket(PORT)) {
+                System.out.println("Server started: http:://127.0.0.1:" + PORT);
 
-            while (true) {
-                ClientServer client = new ClientServer(serverSocket.accept());
-                client.serve();
+                while (true) {
+                    ClientServer client = new ClientServer(serverSocket.accept());
+                    client.serve();
+                }
             }
 
 //            System.out.println("Close the server socket");
